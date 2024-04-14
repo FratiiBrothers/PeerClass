@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Replace 'FONTURI' with the actual font URI -->
+    <link href="https://fonts.googleapis.com/css2?family=Jersey+10+Charted&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    
+</head>
+<body class="font-[Jersey 10 Charted] bg-gradient-to-t from-[#002f49] to-[#002f49] h-screen">
+    <header class="bg-[#003049]">
+        <nav class="flex justify-between items-center w-[92%] mx-auto">
+            <div>
+                <img class="w-[5vw]" src="{{ url_for('static', filename='photos/Logo.svg') }}" alt="Logo">
+            </div>
+            <div class="nav-links duration-500 md:static absolute bg-[#003049] text-white md:min-h-fit min-h-[60vh] left-0 top-[100%] md:w-auto w-full flex items-center px-5">
+                <ul class="flex md:flex-row flex-col md:items-center md:gap-[4vw] gap-8">
+                    <li>
+                        <a class="hover:text-gray-500" href="/">Acasa</a>
+                    </li>
+                    <li>
+                        <a class="hover:text-gray-500" href="/postari">Postari</a>
+                    </li>
+                    <li>
+                        <a class="hover:text-gray-500" href="/harta">Harta</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="flex items-center gap-6">
+                {% if username == None %}
+                    <a href="/register">
+                        <button class="bg-[#a6c1ee] text-white px-5 py-2 rounded-full hover:bg-[#87acec] bg-gradient-to-r from-[#F77F00] to-[#D62828]">Register</button>
+                    </a>
+                {% endif %}
+
+                {% if username != None %}
+                    <h4 class="text-white text-center">Logat ca:<br><a href={{"/users/" + username}}>{{username}}</a></h4>
+                {% endif %}
+
+                <ion-icon onclick="onToggleMenu(this)" name="menu" class="text-3xl cursor-pointer md:hidden"></ion-icon>
+            </div>
+    </header>
+
+    <div class="container">
+        <form method="post">
+            <h1>Încarcă o postare nouă</h1>
+            <label for="titlu">Titlu:</label><br>
+            <input type="text" id="titlu" name="titlu" required><br>
+            <label for="text">Text:</label><br>
+            <textarea id="text" name="text" rows="5" required></textarea><br>
+            <button type="submit">Trimite</button>
+        </form>
+    </div>
+</body>
+<style>
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        font-family: 'Jersey 10 Charted', sans-serif;
+        background: linear-gradient(to top, #002f49, #002f49);
+        color: white;
+    }
+
+    form {
+        width: 80%;
+        max-width: 600px;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    input[type="text"],
+    textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: none;
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+
+    button[type="submit"] {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        background-color: #a6c1ee;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #87acec;
+    }
+</style>
+</html>

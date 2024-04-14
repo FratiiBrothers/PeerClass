@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FONTURI AICI O SA SCHIMBI TU ELENA SCZ CA MI-AM BATUT JOC CU FONTU ASTA-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jersey+10+Charted&display=swap" rel="stylesheet">
+    <script type="module"
+        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule
+        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</head>
+
+<body class="font-[Jersey 10 Charted] bg-gradient-to-t from-[#002f49] to-[#002f49] h-screen">
+    <header class="bg-[#003049]">
+        <nav class="flex justify-between items-center w-[92%] mx-auto">
+            <div>
+                <img class="w-[5vw]" src="{{ url_for('static', filename='photos/Logo.svg') }}" alt="Logo">
+            </div>
+            <div class="nav-links duration-500 md:static absolute bg-[#003049] text-white md:min-h-fit min-h-[60vh] left-0 top-[100%] md:w-auto w-full flex items-center px-5">
+                <ul class="flex md:flex-row flex-col md:items-center md:gap-[4vw] gap-8">
+                    <li>
+                        <a class="hover:text-gray-500" href="/">Acasa</a>
+                    </li>
+                    <li>
+                        <a class="hover:text-gray-500" href="/postari">Postari</a>
+                    </li>
+                    <li>
+                        <a class="hover:text-gray-500" href="/harta">Harta</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="flex items-center gap-6">
+                {% if username == None %}
+                    <a href="/register">
+                        <button class="bg-[#a6c1ee] text-white px-5 py-2 rounded-full hover:bg-[#87acec] bg-gradient-to-r from-[#F77F00] to-[#D62828]">Register</button>
+                    </a>
+                {% endif %}
+
+                {% if username != None %}
+                    <h4 class="text-white text-center">Logat ca:<br><a href={{"/users/" + username}}>{{username}}</a></h4>
+                {% endif %}
+
+                <ion-icon onclick="onToggleMenu(this)" name="menu" class="text-3xl cursor-pointer md:hidden"></ion-icon>
+            </div>
+    </header>
+
+    <!-- Folosim biblioteca Leaflet pentru harta interactivă -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #mapid {
+            width: 80vw; /* Adjusted to occupy 80% of the viewport width */
+            height: 90vh; /* Adjusted to occupy 90% of the viewport height */
+            margin: auto; /* Centering the map horizontally */
+        }
+
+        /* Add this style to make the text white */
+        #mapid + * {
+            color: white;
+        }
+
+        /* Add this style to make the labels rounded */
+        form label {
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            display: inline-block;
+            color: white; /* Make the labels white */
+        }
+
+        /* Adjust the button background color and make it round */
+        form button {
+            background-color: #4a5568;
+            border-radius: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        /* Add this style to make the text inside the form black */
+        #pin-form input {
+            color: black;
+        }
+    </style>
+
+    <div id="mapid"></div>
+
+    <form id="pin-form">
+        <label for="latitude">Latitudine:</label>
+        <input type="text" id="latitude" name="latitude">
+        <br>
+        <label for="longitude">Longitudine:</label>
+        <input type="text" id="longitude" name="longitude">
+        <br>
+        <label for="numar_persoane">Număr persoane:</label>
+        <input type="text" id="numar_persoane" name="numar_persoane">
+        <br>
+        <button type="submit">Adaugă Pin</button>
+    </form>
+
+    <!-- Includem biblioteca Leaflet pentru harta interactivă -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+        var map = L.map('mapid').setView([45.14, 24.36], 10);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        fetch('/get-pins')
+            .then(response => response.json())
+            .then(data => {
+                var pins = data['pins']
+                for (pin of pins) {
+                    L.marker([parseFloat(pin['latitude']), parseFloat(pin['longitude'])]).addTo(map)
+                        .bindPopup(`${pin.numar_persoane} persoane`)
+                }
+            })
+
+        // Trimiterea formularului pentru adăugarea unui pin
+        document.getElementById('pin-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+
+            var object = {};
+            formData.forEach(function (value, key) {
+                object[key] = value;
+            });
+            var json = JSON.stringify(object);
+
+            fetch('/save-pin', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: json
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message);
+                    // După ce pin-ul este salvat cu succes în baza de date, reîmprospătăm pagina pentru a vedea actualizarea pe hartă
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Eroare:', error);
+                });
+        });
+
+        // Adăugăm un marker pe hartă la clic
+        map.on('click', function (e) {
+            L.marker(e.latlng).addTo(map);
+            document.getElementById('latitude').value = e.latlng.lat;
+            document.getElementById('longitude').value = e.latlng.lng;
+        });
+
+        const navLinks = document.querySelector('.nav-links')
+
+        function onToggleMenu(e) {
+            e.name = e.name === 'menu' ? 'close' : 'menu'
+            navLinks.classList.toggle('top-[9%]')
+        }
+    </script>
+    </body>
+
+    <style>
+        .bg-custom-color {
+            background-color: #e9e2b6;
+        }
+    </style>
+
+</html>

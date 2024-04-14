@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FONTURI AICI O SA SCHIMBI TU ELENA SCZ CA MI-AM BATUT JOC CU FONTU ASTA-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jersey+10+Charted&display=swap" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</head>
+
+<body class="font-[Jersey 10 Charted] h-screen">
+    <header class="bg-[#003049]">
+        <nav class="flex justify-between items-center w-[92%] mx-auto">
+            <div>
+                <img class="w-[5vw]" src="{{ url_for('static', filename='photos/Logo.svg') }}" alt="Logo">
+            </div>
+            <div class="nav-links duration-500 md:static absolute bg-[#003049] text-white md:min-h-fit min-h-[60vh] left-0 top-[100%] md:w-auto w-full flex items-center px-5">
+                <ul class="flex md:flex-row flex-col md:items-center md:gap-[4vw] gap-8">
+                    <li>
+                        <a class="hover:text-gray-500" href="/">Acasa</a>
+                    </li>
+                    <li>
+                        <a class="hover:text-gray-500" href="/postari">Postari</a>
+                    </li>
+                    <li>
+                        <a class="hover:text-gray-500" href="/harta">Harta</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="/login">
+                    <button class="bg-[#a6c1ee] text-white px-5 py-2 rounded-full hover:bg-[#87acec] bg-gradient-to-r from-[#F77F00] to-[#D62828]">Login</button>
+                </a>
+            <ion-icon onclick="onToggleMenu(this)" name="menu" class="text-3xl cursor-pointer md:hidden"></ion-icon>
+        </div>
+    </header>
+    <section class="bg-[#003049] min-h-screen flex items-center justify-center">
+        <!-- login container -->
+        <div class="bg-gray-100 flex rounded-2xl shadow-lg max-w-3xl p-5 items-center">
+            <!-- image -->
+            <div class="md:block hidden w-1/2 float-left">
+                <!-- <img class="rounded-2xl" src="https://images.unsplash.com/photo-1616606103915-dea7be788566?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1887&q=80"> -->
+                <div class="w-[400px] h-[350px] bg-gradient-to-r from-[#D62828] via-[#F77F00] to-[#FCBF49] background-animate rounded-2xl"></div>
+            </div>
+            <!-- form -->
+            
+            <div class="md:w-1/2 px-8 md:px-16">
+                <h2 class="font-bold text-2xl text-[#002D74] mt-[-30px] pb-5">Register</h2>
+
+                <form action="/register" method="POST" class="flex flex-col gap-4">
+                    <input class="p-3 rounded-xl border w-full" type="username" name="username" placeholder="Username">
+                    <input class="p-3 rounded-xl border w-full mt-1" type="password" name="password" placeholder="Password">
+                    <input class="p-3 rounded-xl border w-full mt-1" type="email" name="email" placeholder="Email">
+                    <button class="bg-[#002D74] rounded-xl text-white py-2 hover:scale-105 duration-300 mt-1">Register frate gen fa cont</button>
+                </form>
+                
+
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const navLinks = document.querySelector('.nav-links')
+        function onToggleMenu(e){
+            e.name = e.name === 'menu' ? 'close' : 'menu'
+            navLinks.classList.toggle('top-[9%]')
+        }
+
+        function redirectToLogin() {
+            window.location.href = "/login";
+        }
+    </script>
+
+    <style>
+        .background-animate {
+            background-size: 400%;
+
+            -webkit-animation: AnimationName 5s ease infinite;
+            -moz-animation: AnimationName 5s ease infinite;
+            animation: AnimationName 5s ease infinite;
+        }
+
+        @keyframes AnimationName {
+            0%,
+            100% {
+            background-position: 0% 50%;
+            }
+            50% {
+            background-position: 100% 50%;
+            }
+        }
+    </style>
+</body>
+
+</html>
